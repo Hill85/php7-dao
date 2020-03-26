@@ -49,12 +49,7 @@ class Usuario{
 
 		if (count($results) > 0){
 
-			$row = $results[0];
-
-			$this->setIdusuario($row['idusuario']);
-			$this->setDeslogin($row['deslogin']);
-			$this->setDessenha($row['dessenha']);
-			$this->setDtcadastro(new DateTime($row['dtcadastro']));
+			$this->setData($results[0]);
 
 		}
 
@@ -102,18 +97,16 @@ class Usuario{
 
 		$results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(
 			
-			":LOGIN"=>$login,
+			":LOGIN"=>$Login,
 			":PASSWORD"=>$password
 		));
 
 		if (count($results) > 0){
 
-			$row = $results[0];
 
-			$this->setIdusuario($row['idusuario']);
-			$this->setDeslogin($row['deslogin']);
-			$this->setDessenha($row['dessenha']);
-			$this->setDtcadastro(new DateTime($row['dtcadastro']));
+
+			$this->setData($results[0]);
+			
 
 		} else {
 
@@ -121,14 +114,67 @@ class Usuario{
 
 		}
 
+	}
+ //==================================================================================
+
+		public function setData($data){
+
+			$this->setIdusuario($data['idusuario']);
+			$this->setDeslogin($data['deslogin']);
+			$this->setDessenha($data['dessenha']);
+			$this->setDtcadastro(new DateTime($data['dtcadastro']));
+
+		}
 
 
 
-	}//end class
+//===================================================================================
+  // Método inserir
+
+		public function insert(){
+
+			$sql = new sql();
+
+			$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array(// Prossedures realiza a inserção no banco de dados 
+				':LOGIN'=>$this->getDeslogin(),
+				':PASSWORD'=>$this->getDessenha()
+			));
+
+			if(count($results) > 0){
+
+				$this->setData($results[0]);
+
+		    }
+	   }
+
+	   	public function __construct($Login = "", $password = ""){
+
+	   		$this->setDeslogin($Login);
+	   		$this->setDessenha($password);
+
+	   	}
+
+//=================================================================================
+
+	   	public function update($Login, $password){ // Método para alterar login e senha 
+
+	   		$this->setDeslogin($Login);
+	   		$this->setDessenha($password);
+
+	   		$sql = new sql();
+
+	   		$sql->query("UPDATE tb_usuarios SET deslogin = :LOGIN, dessenha :PASSWORD WHERE idusuario = :ID",array(
+	   			':LOGIN'=>$this->getDeslogin(),
+	   			':PASSWORD'=>$this->getDessenha(),
+	   			':ID'=>$this->getIdusuario()
+	   		));
+
+	   	}
 
 
 
 
+//=================================================================================
 	public function __toString(){
 
 		return json_encode(array(
@@ -147,14 +193,7 @@ class Usuario{
 
 
 
-
-
-
-
-
-
-
-}
+}//end class
 
 
 
