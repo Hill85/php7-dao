@@ -38,7 +38,7 @@ class Usuario{
 
 //----------------------------------------------------
 
-	public function loadById($id){ //Método
+	public function loadById($id){ //Método retorna um ID do banco de dados
 
 		$sql = new sql();
 
@@ -60,6 +60,74 @@ class Usuario{
 
 
 	}
+
+	//===================================================================================
+
+		// A vantegem do método estático, que não precisa instanciar
+
+	public static function getList(){ // Método que retorna uma lista dos usuários do banco de dados 
+
+		$sql = new sql();
+
+		return $sql->select("SELECT * FROM tb_usuarios ORDER BY deslogin");
+
+
+
+	}
+
+	//=================================================================================
+
+  //Realiza busca por usuários, através de suas iniciais ou por uma letra
+
+	public static function search($login){
+
+		$sql = new sql();
+
+		return $sql->select("SELECT * FROM tb_usuarios WHERE deslogin LIKE :SEARCH ORDER BY deslogin", array(
+
+			':SEARCH'=> "%". $login. "%"
+
+		));
+
+	}
+
+
+  //==================================================================================
+
+// Método de validação de login 
+
+	public function login($login, $password){
+
+		$sql = new sql();
+
+		$results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(
+			
+			":LOGIN"=>$login,
+			":PASSWORD"=>$password
+		));
+
+		if (count($results) > 0){
+
+			$row = $results[0];
+
+			$this->setIdusuario($row['idusuario']);
+			$this->setDeslogin($row['deslogin']);
+			$this->setDessenha($row['dessenha']);
+			$this->setDtcadastro(new DateTime($row['dtcadastro']));
+
+		} else {
+
+			throw new Exception("Login ou senha inválidos");	
+
+		}
+
+
+
+
+	}//end class
+
+
+
 
 	public function __toString(){
 
