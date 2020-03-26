@@ -39,17 +39,16 @@ require_once ("config.php");
 
 // Método para alterar usuário e senha
 
+//$usuario = new Usuario();
+//$usuario->loadbyId(8);
+//$usuario->update("professor", "hfhdhjd");
+//echo $usuario;
 
 $usuario = new Usuario();
-$usuario->loadbyId(8);
-$usuario->update("professor", "hfhdhjd");
+$usuario->loadbyId(7);
+$usuario->delete();
 
 echo $usuario;
-
-
-
-
-
 
 
 
